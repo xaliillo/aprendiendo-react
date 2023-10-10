@@ -1,26 +1,26 @@
-import { useState } from "react"
-import confetti from "canvas-confetti"
+import { useState } from 'react'
+import confetti from 'canvas-confetti'
 
-import { Square } from "./components/Square"
-import { TURNS } from "./constants.js"
-import { checkWinner, checkEndGame } from "./logic/board.js"
-import { WinnerModal } from "./components/WinnerModal.jsx"
+import { Square } from './components/Square'
+import { TURNS } from './constants.js'
+import { checkWinner, checkEndGame } from './logic/board.js'
+import { WinnerModal } from './components/WinnerModal.jsx'
 
-function App() {
+function App () {
   const [board, setBoard] = useState(() => {
     const boardFromStorage = window.localStorage.getItem('board')
-    if(boardFromStorage) return JSON.parse(boardFromStorage)
+    if (boardFromStorage) return JSON.parse(boardFromStorage)
     return Array(9).fill(null)
   })
-  
-  const [turn, setTurn] = useState(() =>{
+
+  const [turn, setTurn] = useState(() => {
     const turnsFromStorage = window.localStorage.getItem('turn')
-    return turnsFromStorage ?? TURNS.X 
-  }) 
+    return turnsFromStorage ?? TURNS.X
+  })
   const [winner, setWinner] = useState(null)
-  
-  const updateBoard = (index)=>{
-    if(board[index] || winner) return
+
+  const updateBoard = (index) => {
+    if (board[index] || winner) return
 
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     const newBoard = [...board]
@@ -30,14 +30,14 @@ function App() {
     window.localStorage.setItem('board', JSON.stringify(newBoard))
     window.localStorage.setItem('turn', newTurn)
     const newWinner = checkWinner(newBoard)
-    if(newWinner) {
+    if (newWinner) {
       confetti()
       setWinner(newWinner)
-    }else if(checkEndGame(newBoard)){
+    } else if (checkEndGame(newBoard)) {
       setWinner(false)
     }
   }
-  const resetGame = ()=>{
+  const resetGame = () => {
     setTurn(TURNS.X)
     setWinner(null)
     setBoard(Array(9).fill(null))
@@ -45,16 +45,16 @@ function App() {
     window.localStorage.removeItem('board')
   }
 
-  return(
+  return (
     <main className='board'>
       <h1>Tic Tac Toe</h1>
       <button onClick={(resetGame)}>Reset del juego</button>
-      <section className="game">
+      <section className='game'>
         {
-          board.map((square, index)=>{
+          board.map((square, index) => {
             return (
-              <Square 
-                key = {index} 
+              <Square
+                key={index}
                 index={index}
                 updateBoard={updateBoard}
               >
@@ -64,11 +64,11 @@ function App() {
           })
         }
       </section>
-      <section className="turn">
-        <Square isSelected = {turn === TURNS.X}>{TURNS.X}</Square>
-        <Square isSelected = {turn === TURNS.O}>{TURNS.O}</Square>
+      <section className='turn'>
+        <Square isSelected={turn === TURNS.X}>{TURNS.X}</Square>
+        <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
       </section>
-      <WinnerModal resetGame={resetGame} winner={winner} />  
+      <WinnerModal resetGame={resetGame} winner={winner} />
     </main>
   )
 }
